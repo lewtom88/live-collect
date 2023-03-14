@@ -1,0 +1,15 @@
+let history = document.querySelector(".chat-history > .history");
+let observer = new MutationObserver(
+	(mutationRecords) => (
+    mutationRecords.map((x) => x.addedNodes.forEach(
+      n => {
+        let username = n.querySelector('.username').innerText;
+        let comment = n.querySelector('.comment').innerText;
+        console.log([username, comment]);
+      })
+    ))
+);
+observer.observe(history, {
+	childList: true,
+});
+

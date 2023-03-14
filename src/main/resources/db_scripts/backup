@@ -1,0 +1,152 @@
+userId=3338609581; kuaishou.live.web_st=ChRrdWFpc2hvdS5saXZlLndlYi5zdBKAAZH3auqL3nNJltbmYX1lYmDLvFl6YebiGpE4BfnGeUE8O-wt_vner7RgMzyFnEmvW_cyKN9jhaVUG7QOg-OouK68Qb41ONEKyjPQEXysIe_8g5PBhPXSadqO5m3jYUKB9E03DYdTVidwYuauoitxYybS4QBy8TW0EYD6HXerbLRvGhJ5Kb3oJw1CbYI_enWdupbF-O4iIF-3U1ThhFL_YlCql35ajXZ78JE2BLOOU9OgAs9PYUVnKAUwAQ
+
+
+5 10 4 射手赢
+
+
+
+comment-cell gift-comment
+
+
+comment light
+
+
+
+
+[["n1", "abc"], ["n2", "cd"]]
+[[
+
+https://live.kuaishou.com/u/3x7cff8hm8b9uwi
+
+https://live.kuaishou.com/u/baixi9999999999
+
+https://live.kuaishou.com/u/YaoYao096096
+
+https://live.kuaishou.com/u/tianci666
+
+
+
+https://playcode.io/1218219
+
+
+
+
+monitorEvents(document.getElementsByClassName("chat"))
+
+getEventListeners(document.getElementsByClassName("chat"))
+
+
+document.getElementsByClassName("comment-cell").children[0].value
+
+
+
+
+mvn clean package && java -jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 target/gs-spring-boot-0.1.0.jar
+
+
+
+
+document.querySelector(".comment-cell > span").textContent
+
+document.querySelector(".history > .chat-info > .comment-cell > span").textContent
+
+
+setInterval(function() {
+  var cells = document.querySelectorAll(".chat-info > .comment-cell");
+  for (var i = 0; i < cells.length; i++) {
+    var username = cells[i].querySelector('.username').textContent;
+    var comment = cells[i].querySelector('.comment').textContent;
+    console.log(username + ' -> ' + comment);
+    cells[i].remove();
+  }
+}, 1000);
+
+
+
+let post = JSON.stringify(postObj)
+const url = "https://jsonplaceholder.typicode.com/posts"
+let xhr = new XMLHttpRequest()
+xhr.open('POST', url, true)
+xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8')
+xhr.send(post);
+xhr.onload = function () {
+    if(xhr.status === 201) {
+        console.log("Post successfully created!")
+    }
+}
+
+
+
+
+mvn archetype:generate
+	-DgroupId=com.wy
+	-DartifactId=live-collect
+	-DarchetypeArtifactId={maven-template}
+	-DinteractiveMode=false
+
+
+
+mvn archetype:generate -DgroupId=com.wy -DartifactId=live-collect -DarchetypeArtifactId=maven-archetype-webapp -DinteractiveMode=false
+
+
+
+
+
+
+const url = "http://localhost:8080/insert_comment";
+var xhr = new XMLHttpRequest();
+xhr.open('POST', url, true);
+xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8');
+setInterval(function() {
+  var cells = document.querySelectorAll(".chat-info > .comment-cell");
+  var data = [];
+  for (var i = 0; i < cells.length; i++) {
+    var username = cells[i].querySelector('.username').textContent;
+    var comment = cells[i].querySelector('.comment').textContent;
+    data.push([username, comment]);
+    cells[i].remove();
+  }
+
+  let post = JSON.stringify({"data" : data});
+  xhr.send(post);
+  xhr.onload = function () {
+    if(xhr.status === 201) {
+        console.log("Post successfully created!")
+    }
+}
+
+}, 100000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const url = "http://localhost:8080/insert_comment";
+var xhr = new XMLHttpRequest();
+setInterval(function() {
+  var cells = document.querySelectorAll(".chat-info > .comment-cell");
+  var data = [];
+  for (var i = 0; i < cells.length; i++) {
+    var username = cells[i].querySelector('.username').textContent;
+    var comment = cells[i].querySelector('.comment').textContent;
+    data.push([username, comment]);
+    cells[i].remove();
+  }
+
+  xhr.open('POST', url, true);
+  xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8');
+  let post = "data=" + JSON.stringify(data);
+  xhr.send(post);
+  console.log(username + " -> " + comment);
+
+}, 100000);

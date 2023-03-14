@@ -1,0 +1,18 @@
+const url = "http://localhost:8080/insert_comment";
+let xhr = new XMLHttpRequest();
+setInterval(function() {
+  let cells = document.querySelectorAll(".chat-info > .comment-cell");
+  let data = [];
+  for (var i = 0; i < cells.length; i++) {
+    let username = cells[i].querySelector('.username').textContent;
+    let comment = cells[i].querySelector('.comment').textContent;
+    data.push([username, comment]);
+    console.log(username + " -> " + comment);
+    cells[i].remove();
+  }
+
+  xhr.open('POST', url, true);
+  xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8');
+  xhr.send(JSON.stringify({"data" : data}));
+
+}, 1000);

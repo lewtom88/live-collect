@@ -1,0 +1,22 @@
+let history = document.querySelector(".chat-history > .history");
+let observer = new MutationObserver(
+	(mutationRecords) => (
+    mutationRecords.map((x) => x.addedNodes.forEach(
+      n => {
+        let username = n.querySelector('.username');
+        let comment = n.querySelector('.comment').innerText.trim();
+        console.log([username.innerText, comment]);
+        if (comment.toLowerCase().startWith("kda")) {
+          fetchDetails(username, data);
+        }
+      })
+    ))
+);
+observer.observe(history, {
+	childList: true,
+});
+
+function getDetails(n, data) {
+  n.click();
+  
+}
