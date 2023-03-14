@@ -7,7 +7,7 @@ public class CommentQuery extends Paging {
     private String name;
     private String comment;
     private Integer type;
-    private int rank;
+    private Integer rank;
     private Long startTime;
     private Long endTime;
 
@@ -59,11 +59,11 @@ public class CommentQuery extends Paging {
         this.principalId = principalId;
     }
 
-    public int getRank() {
+    public Integer getRank() {
         return rank;
     }
 
-    public void setRank(int rank) {
+    public void setRank(Integer rank) {
         this.rank = rank;
     }
 

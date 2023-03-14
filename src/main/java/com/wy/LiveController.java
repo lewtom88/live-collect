@@ -49,12 +49,6 @@ public class LiveController {
         return "Success!";
     }
 
-    @RequestMapping("query_comment")
-    public Result<Comment> queryComment(@RequestBody CommentQuery query) {
-        List<Comment> list = commentService.findComment(query);
-        return new Result(list);
-    }
-
     @RequestMapping("query_kda")
     public String queryKDA(@RequestBody KDAQuery query) {
         List<KDA> list = commentService.findKDA(query);

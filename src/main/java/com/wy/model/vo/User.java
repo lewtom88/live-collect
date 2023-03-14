@@ -1,4 +1,4 @@
-package com.wy.model.pojo;
+package com.wy.model.vo;
 
 public class User {
     private Integer id;
