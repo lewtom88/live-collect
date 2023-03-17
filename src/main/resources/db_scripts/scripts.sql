@@ -27,7 +27,7 @@ CREATE TABLE `t_live_kda` (
   `player_role` varchar(5) DEFAULT NULL,
   `game_result` char(1) DEFAULT NULL,
   `game_round` smallint DEFAULT NULL,
-  `invalid` TINYINT DEFAULT 0,
+  `valid` TINYINT DEFAULT 0,
   `create_time` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `t_live_kda_gen_time_IDX` (`game_round`, `create_time`) USING BTREE,
@@ -60,6 +60,16 @@ CREATE TABLE `t_live_watching` (
   `id` int NOT NULL AUTO_INCREMENT,
   `watching` int DEFAULT NULL,
   `likes` int DEFAULT NULL,
+  `create_time` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `t_live_watching_gen_time_IDX` (`create_time`) USING BTREE
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+DROP TABLE IF EXISTS `t_live_game`;
+CREATE TABLE `t_live_game` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `game_round` int DEFAULT NULL,
   `create_time` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `t_live_watching_gen_time_IDX` (`create_time`) USING BTREE

@@ -13,7 +13,10 @@ public class KDA {
     private String gameResult;
     private Integer gameRound;
     private Long createTime;
-    private Boolean invalid;
+    private int valid;
+    private String contactId;
+    private String contactNick;
+    private String contactType;
 
     public Integer getId() {
         return id;
@@ -111,11 +114,35 @@ public class KDA {
         this.createTime = createTime;
     }
 
-    public Boolean getInvalid() {
-        return invalid;
+    public int getValid() {
+        return valid;
     }
 
-    public void setInvalid(Boolean invalid) {
-        this.invalid = invalid;
+    public void setValid(int valid) {
+        this.valid = valid;
+    }
+
+    public String getContactId() {
+        return contactId;
+    }
+
+    public void setContactId(String contactId) {
+        this.contactId = contactId;
+    }
+
+    public String getContactNick() {
+        return contactNick;
+    }
+
+    public void setContactNick(String contactNick) {
+        this.contactNick = contactNick;
+    }
+
+    public String getContactType() {
+        return contactType;
+    }
+
+    public void setContactType(String contactType) {
+        this.contactType = contactType;
     }
 }

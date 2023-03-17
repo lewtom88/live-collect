@@ -1,5 +1,7 @@
 package com.wy.model.query;
 
+import java.util.List;
+
 public class KDAQuery extends Paging {
 
     private Integer id;
@@ -15,7 +17,9 @@ public class KDAQuery extends Paging {
     private Integer gameRound;
     private Long startTime;
     private Long endTime;
-    private Boolean invalid;
+    private Object valid;
+    private String contactType;
+    private int timeRange;
 
     private String sortField;
     private String sortType;
@@ -140,11 +144,28 @@ public class KDAQuery extends Paging {
         this.sortType = sortType;
     }
 
-    public Boolean getInvalid() {
-        return invalid;
+    public Object getValid() {
+        return valid;
     }
 
-    public void setInvalid(Boolean invalid) {
-        this.invalid = invalid;
+    public void setValid(Object valid) {
+        this.valid = valid;
     }
+
+    public int getTimeRange() {
+        return timeRange;
+    }
+
+    public void setTimeRange(int timeRange) {
+        this.timeRange = timeRange;
+    }
+
+    public String getContactType() {
+        return contactType;
+    }
+
+    public void setContactType(String contactType) {
+        this.contactType = contactType;
+    }
+
 }

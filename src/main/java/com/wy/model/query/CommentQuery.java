@@ -1,5 +1,9 @@
 package com.wy.model.query;
 
+import com.alibaba.fastjson2.util.DateUtils;
+
+import java.util.Date;
+
 public class CommentQuery extends Paging {
 
     private Integer id;
@@ -8,8 +12,8 @@ public class CommentQuery extends Paging {
     private String comment;
     private Integer type;
     private Integer rank;
-    private Long startTime;
-    private Long endTime;
+    private String startTime;
+    private String endTime;
 
     public Integer getId() {
         return id;
@@ -43,14 +47,6 @@ public class CommentQuery extends Paging {
         this.type = type;
     }
 
-    public Long getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Long startTime) {
-        this.startTime = startTime;
-    }
-
     public String getPrincipalId() {
         return principalId;
     }
@@ -67,11 +63,19 @@ public class CommentQuery extends Paging {
         this.rank = rank;
     }
 
-    public Long getEndTime() {
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Long endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 }

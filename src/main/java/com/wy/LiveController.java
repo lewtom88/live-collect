@@ -1,12 +1,13 @@
 package com.wy;
 
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.wy.model.Result;
 import com.wy.model.vo.Comment;
 import com.wy.model.vo.KDA;
 import com.wy.model.vo.User;
 import com.wy.model.vo.Watching;
-import com.wy.model.query.CommentQuery;
 import com.wy.model.query.KDAQuery;
 import com.wy.service.CommentService;
 import com.wy.service.UserService;
@@ -41,6 +42,12 @@ public class LiveController {
     @Autowired
     private UserService userService;
 
+    @RequestMapping("/start_game")
+    public Result<Integer> startGame() {
+        Integer r = commentService.startNewGame();
+        return new Result<>(r);
+    }
+
     @RequestMapping("/insert_comment")
     public String insertComment(@RequestBody Map<String, List<List<String>>> body) {
         List<List<String>> data =  body.get("data");
@@ -50,9 +57,23 @@ public class LiveController {
     }
 
     @RequestMapping("query_kda")
-    public String queryKDA(@RequestBody KDAQuery query) {
+    public Result<PageInfo<KDA>> queryKDA(@RequestBody KDAQuery query) {
+        Object valid = query.getValid();
+        if (valid != null) {
+            if (valid instanceof List) {
+                List validList = (List) valid;
+                if (validList.isEmpty() || validList.size() >= 2) {
+                    query.setValid(null);
+                } else {
+                    query.setValid(validList.get(0));
+                }
+            }
+        }
+        PageHelper.startPage(query.getCurrent(), query.getPageSize());
         List<KDA> list = commentService.findKDA(query);
-        return JSON.toJSONString(list);
+        PageInfo<KDA> pageInfo = new PageInfo(list);
+
+        return new Result<>(pageInfo);
     }
 
     @RequestMapping("socket_collect")

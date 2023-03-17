@@ -15,11 +15,6 @@ public class Result<T> {
         this.data = data;
     }
 
-    public Result(String errMsg) {
-        this.success = false;
-        this.errorMsg = errMsg;
-    }
-
     public boolean isSuccess() {
         return success;
     }

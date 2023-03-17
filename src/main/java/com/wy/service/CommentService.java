@@ -1,9 +1,11 @@
 package com.wy.service;
 
 import com.wy.mapper.CommentMapper;
+import com.wy.mapper.GameRoundMapper;
 import com.wy.mapper.KDAMapper;
 import com.wy.mapper.UserMapper;
 import com.wy.model.vo.Comment;
+import com.wy.model.vo.GameRound;
 import com.wy.model.vo.KDA;
 import com.wy.model.vo.User;
 import com.wy.model.query.CommentQuery;
@@ -17,13 +19,16 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 @Component
 public class CommentService {
 
     Logger logger = LoggerFactory.getLogger(CommentService.class);
 
-    private AtomicInteger round = new AtomicInteger(1);
+    private AtomicInteger round;
+
+    private Long gameTime;
 
     @Autowired
     private CommentMapper commentMapper;
@@ -34,7 +39,12 @@ public class CommentService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private GameRoundMapper gameRoundMapper;
+
     private Set<String> guessUsers = new HashSet<>();
+
+    private Pattern pattern = Pattern.compile("[射手|大射|法师|大法|战士|边路|坦边|坦克|打野|野核|辅助|游走] *[赢|输]* \\d+[ |-]+\\d+[ |-]+\\d+");
 
     private static Map<String, String> playerMapping = new HashMap<>();
 
@@ -63,11 +73,31 @@ public class CommentService {
     /**
      * 开启下一场比赛
      */
-    public void startNewGame() {
+    public int startNewGame() {
+        if (round == null) {
+            gameTime = System.currentTimeMillis();
+            GameRound gameRound = gameRoundMapper.findLatest();
+            if (gameRound == null || gameTime - gameRound.getCreateTime() > 1000 * 60 * 60) {
+                round = new AtomicInteger(1);
+            } else {
+                Integer r = gameRound.getGameRound();
+                round = new AtomicInteger(r + 1);
+            }
+        } else {
+            round.incrementAndGet();
+            gameTime = System.currentTimeMillis();
+        }
+
+        GameRound newGame = new GameRound();
+        newGame.setGameRound(round.get());
+        newGame.setCreateTime(gameTime);
+        gameRoundMapper.insert(newGame);
+
         logger.info("{} attended in this match.", guessUsers.size());
         guessUsers = new HashSet<>();
-        int r = round.incrementAndGet();
-        logger.info("Start new game...round: {}", r);
+        logger.info("Start new game...round: {}", round.get());
+
+        return round.get();
     }
 
     /**
@@ -88,19 +118,26 @@ public class CommentService {
                 kda.setComment(c.getComment());
                 kda.setCreateTime(current);
                 if (guessUsers.contains(kda.getPrincipalId())) {
-                    kda.setInvalid(true);
+                    kda.setValid(0);
                     logger.warn("The user has guessed at this round: {0}", kda.getName());
+                } else {
+                    kda.setValid(1);
+                    guessUsers.add(kda.getPrincipalId());
                 }
-                parseGuessing(kda);
-                kda.setGameRound(round.get());
+                parseGuessing1(kda);
+                if (round != null) {
+                    kda.setGameRound(round.get());
+                }
 
                 kdaList.add(kda);
             } else if (isContactMessage(c.getComment())) {
                 c.setType(Comment.TYPE_CONTACT_UPDATE);
                 User user = new User();
+                user.setCreateTime(current);
                 user.setPrincipalId(c.getPrincipalId());
+                user.setName(c.getName());
                 user.setContactType(isQQ(c.getComment()) ? "QQ" : "微信");
-                user.setContactId(c.getComment().substring(3));
+                user.setContactNick(c.getComment().substring(3));
                 contactList.add(user);
             }
 
@@ -121,9 +158,9 @@ public class CommentService {
         if (key == null) {
             return false;
         }
-
-        return key.toLowerCase().startsWith("kda ");
+        return pattern.matcher(key).find();
     }
+
     private boolean isContactMessage(String key) {
         if (key == null || key.length() < 4) {
             return false;
@@ -139,6 +176,49 @@ public class CommentService {
 
     private boolean isWeChat(String key) {
         return key.startsWith("微信 ") || key.startsWith("微信:") || key.startsWith("微信：");
+    }
+
+    @Test
+    public void test1() {
+        Assert.assertTrue(isGuessingMessage("射手赢 3 2 1"));
+        Assert.assertFalse(isGuessingMessage("射手赢 3 2 "));
+
+        KDA kda = new KDA();
+        kda.setComment("射手赢 3 2 1");
+        CommentService cs = new CommentService();
+        cs.parseGuessing1(kda);
+        Assert.assertEquals(kda.getPlayer(), "射手");
+        Assert.assertEquals(kda.getGameResult(), "赢");
+        Assert.assertEquals(kda.getKill().intValue(), 3);
+        Assert.assertEquals(kda.getDeath().intValue(), 2);
+        Assert.assertEquals(kda.getAssist().intValue(), 1);
+
+        kda = new KDA();
+        kda.setComment("     射手 3 2 1   ");
+        cs.parseGuessing1(kda);
+        Assert.assertEquals(kda.getPlayer(), "射手");
+        Assert.assertEquals(kda.getGameResult(), "赢");
+        Assert.assertEquals(kda.getKill().intValue(), 3);
+        Assert.assertEquals(kda.getDeath().intValue(), 2);
+        Assert.assertEquals(kda.getAssist().intValue(), 1);
+
+        kda = new KDA();
+        kda.setComment("射手 赢    3   2 1  ");
+        cs.parseGuessing1(kda);
+        Assert.assertEquals(kda.getPlayer(), "射手");
+        Assert.assertEquals(kda.getGameResult(), "赢");
+        Assert.assertEquals(kda.getKill().intValue(), 3);
+        Assert.assertEquals(kda.getDeath().intValue(), 2);
+        Assert.assertEquals(kda.getAssist().intValue(), 1);
+
+        kda = new KDA();
+        kda.setComment("射手赢 3-2-1");
+        cs.parseGuessing1(kda);
+        Assert.assertEquals(kda.getPlayer(), "射手");
+        Assert.assertEquals(kda.getGameResult(), "赢");
+        Assert.assertEquals(kda.getKill().intValue(), 3);
+        Assert.assertEquals(kda.getDeath().intValue(), 2);
+        Assert.assertEquals(kda.getAssist().intValue(), 1);
     }
 
     @Test
@@ -210,6 +290,38 @@ public class CommentService {
      * kda 3-2-1 射手赢
      * @param kda
      */
+    private void parseGuessing1(KDA kda) {
+        String c = kda.getComment().trim();
+        String[] ca = c.split("[ |-]+");
+        if (ca.length < 4) {
+            logger.error("Failed to parse the guessing. {}", c);
+            return;
+        }
+        if (ca.length == 5) {
+            kda.setPlayer(ca[0]);
+            kda.setPlayerRole(convertPlayer(kda.getPlayer()));
+            kda.setGameResult(ca[1]);
+            kda.setKill(Integer.parseInt(ca[2]));
+            kda.setDeath(Integer.parseInt(ca[3]));
+            kda.setAssist(Integer.parseInt(ca[4]));
+        } else if (ca.length == 4) {
+            if (ca[0].length() <= 2) {
+                kda.setPlayer(ca[0]);
+                kda.setPlayerRole(convertPlayer(kda.getPlayer()));
+                kda.setGameResult("赢");
+            } else {
+                kda.setPlayer(ca[0].substring(0, 2));
+                kda.setPlayerRole(convertPlayer(kda.getPlayer()));
+                kda.setGameResult(ca[0].substring(2));
+            }
+            kda.setKill(Integer.parseInt(ca[1]));
+            kda.setDeath(Integer.parseInt(ca[2]));
+            kda.setAssist(Integer.parseInt(ca[3]));
+        } else {
+            logger.error("Failed to parse the comment: " + c);
+        }
+    }
+
     private void parseGuessing(KDA kda) {
         String c = kda.getComment();
         String[] ca = c.split(" |-");

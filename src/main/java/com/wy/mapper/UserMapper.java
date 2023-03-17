@@ -14,10 +14,10 @@ public interface UserMapper {
             "<foreach collection ='list' item='user' separator =','> " +
             "(#{user.principalId,jdbcType=VARCHAR},#{user.name,jdbcType=VARCHAR}," +
             "#{user.intimacyLevel,jdbcType=INTEGER},#{user.fansGroupIntimacyLevel,jdbcType=INTEGER}," +
-            "#{user.wealthGrade,jdbcType=INTEGER},#{user.badgeKey,jdbcType=VARCHAR},#{user.createTime,jdbcType=BIGINT} " +
+            "#{user.wealthGrade,jdbcType=INTEGER},#{user.badgeKey,jdbcType=VARCHAR},#{user.createTime,jdbcType=BIGINT}) " +
             "</foreach>" +
             "ON duplicate KEY UPDATE " +
-            "name=values(name), intimacy_level=values(intimacy_level), fans_group_intimacy_level=(fans_group_intimacy_level)," +
+            "name=values(name), intimacy_level=values(intimacy_level), fans_group_intimacy_level=values(fans_group_intimacy_level)," +
             "wealth_grade=values(wealth_grade), badge_key=values(badge_key)" +
             "</script>")
     void batchSaveOrUpdateIntimacy(@Param("list") List<User> list);
@@ -26,10 +26,10 @@ public interface UserMapper {
             "<foreach collection ='list' item='user' separator =','> " +
             "(#{user.principalId,jdbcType=VARCHAR},#{user.name,jdbcType=VARCHAR}," +
             "#{user.contactType,jdbcType=VARCHAR},#{user.contactNick,jdbcType=VARCHAR}," +
-            "#{user.createTime,jdbcType=BIGINT},#{user.createTime,jdbcType=BIGINT} " +
+            "#{user.createTime,jdbcType=BIGINT},#{user.createTime,jdbcType=BIGINT}) " +
             "</foreach>" +
             "ON duplicate KEY UPDATE " +
-            "name=values(name), contact_type=values(contact_type), contact_nick=(contact_nick)," +
+            "name=values(name), contact_type=values(contact_type), contact_nick=values(contact_nick)," +
             "update_time=values(create_time)" +
             "</script>")
     void batchSaveOrUpdateContact(@Param("list") List<User> list);
