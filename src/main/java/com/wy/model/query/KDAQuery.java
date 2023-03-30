@@ -1,8 +1,6 @@
 package com.wy.model.query;
 
-import java.util.List;
-
-public class KDAQuery extends Paging {
+public class KDAQuery extends SortPaging {
 
     private Integer id;
     private String principalId;
@@ -14,12 +12,13 @@ public class KDAQuery extends Paging {
     private String player;
     private String playerRole;
     private String gameResult;
-    private Integer gameRound;
+    private Integer gameId;
     private Long startTime;
     private Long endTime;
-    private Object valid;
+    private Object status;
     private String contactType;
-    private int timeRange;
+    private Integer timeRange;
+    private Boolean errorFlag;
 
     private String sortField;
     private String sortType;
@@ -104,12 +103,12 @@ public class KDAQuery extends Paging {
         this.gameResult = gameResult;
     }
 
-    public Integer getGameRound() {
-        return gameRound;
+    public Integer getGameId() {
+        return gameId;
     }
 
-    public void setGameRound(Integer gameRound) {
-        this.gameRound = gameRound;
+    public void setGameId(Integer gameId) {
+        this.gameId = gameId;
     }
 
     public Long getStartTime() {
@@ -144,19 +143,19 @@ public class KDAQuery extends Paging {
         this.sortType = sortType;
     }
 
-    public Object getValid() {
-        return valid;
+    public Object getStatus() {
+        return status;
     }
 
-    public void setValid(Object valid) {
-        this.valid = valid;
+    public void setStatus(Object status) {
+        this.status = status;
     }
 
-    public int getTimeRange() {
+    public Integer getTimeRange() {
         return timeRange;
     }
 
-    public void setTimeRange(int timeRange) {
+    public void setTimeRange(Integer timeRange) {
         this.timeRange = timeRange;
     }
 
@@ -168,4 +167,11 @@ public class KDAQuery extends Paging {
         this.contactType = contactType;
     }
 
+    public Boolean getErrorFlag() {
+        return errorFlag;
+    }
+
+    public void setErrorFlag(Boolean errorFlag) {
+        this.errorFlag = errorFlag;
+    }
 }

@@ -11,12 +11,16 @@ public class KDA {
     private String player;
     private String playerRole;
     private String gameResult;
-    private Integer gameRound;
+    private Integer gameId;
     private Long createTime;
-    private int valid;
+    private int status;
     private String contactId;
     private String contactNick;
     private String contactType;
+
+    public static final int STATUS_INVALID = 0;
+    public static final int STATUS_VALID = 1;
+    public static final int STATUS_CHALLENGE = 2;
 
     public Integer getId() {
         return id;
@@ -98,12 +102,12 @@ public class KDA {
         this.gameResult = gameResult;
     }
 
-    public Integer getGameRound() {
-        return gameRound;
+    public Integer getGameId() {
+        return gameId;
     }
 
-    public void setGameRound(Integer gameRound) {
-        this.gameRound = gameRound;
+    public void setGameId(Integer gameId) {
+        this.gameId = gameId;
     }
 
     public Long getCreateTime() {
@@ -114,12 +118,12 @@ public class KDA {
         this.createTime = createTime;
     }
 
-    public int getValid() {
-        return valid;
+    public int getStatus() {
+        return status;
     }
 
-    public void setValid(int valid) {
-        this.valid = valid;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getContactId() {

@@ -1,4 +1,4 @@
-漏消息。。。。。 : DOM的MutationObServer接口，可以在DOM被修改时异步执行回调函数，我的理解就是可以监听DOM修改。
+漏消息。。。。。 : DOM的MutationObServer接口, 可以在DOM被修改时异步执行回调函数，我的理解就是可以监听DOM修改。
 websocket close
 1. type 1 and 2
 2. 送 * N

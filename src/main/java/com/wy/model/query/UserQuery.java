@@ -1,6 +1,6 @@
 package com.wy.model.query;
 
-public class UserQuery extends Paging {
+public class UserQuery extends SortPaging {
     private Integer id;
     private String principalId;
     private String name;

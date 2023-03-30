@@ -26,11 +26,12 @@ CREATE TABLE `t_live_kda` (
   `player` varchar(5) DEFAULT NULL,
   `player_role` varchar(5) DEFAULT NULL,
   `game_result` char(1) DEFAULT NULL,
-  `game_round` smallint DEFAULT NULL,
-  `valid` TINYINT DEFAULT 0,
+  `game_id` int DEFAULT NULL,
+  `status` TINYINT DEFAULT 0,
+  `winner` TINYINT DEFAULT 0,
   `create_time` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `t_live_kda_gen_time_IDX` (`game_round`, `create_time`) USING BTREE,
+  KEY `t_live_kda_gen_time_IDX` (`game_id`, `create_time`) USING BTREE,
   KEY `t_live_kda_round_IDX` (`principal_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -69,8 +70,52 @@ CREATE TABLE `t_live_watching` (
 DROP TABLE IF EXISTS `t_live_game`;
 CREATE TABLE `t_live_game` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `game_round` int DEFAULT NULL,
+  `user_count` int DEFAULT NULL,
+  `kill_count` int DEFAULT NULL,
+  `death` int DEFAULT NULL,
+  `assist` int DEFAULT NULL,
+  `player` varchar(20) DEFAULT NULL,
+  `game_result` char(1) DEFAULT NULL,
+  `play_mode` varchar(10) DEFAULT NULL,
+  `bonus_mode` varchar(10) DEFAULT NULL,
+  `bonus_amount` int DEFAULT NULL,
+  `create_time` bigint DEFAULT NULL,
+  `update_time` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `t_live_game_create_time_IDX` (`create_time`) USING BTREE
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `t_live_challenge`;
+CREATE TABLE `t_live_challenge` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `game_id` int NULL,
+  `kda_id` int NULL,
+  `principal_id` varchar(100) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL,
   `create_time` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `t_live_watching_gen_time_IDX` (`create_time`) USING BTREE
+  KEY `t_live_challenge_create_time_IDX` (`create_time`) USING BTREE
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `t_live_hero`;
+CREATE TABLE `t_live_hero` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) DEFAULT NULL,
+  `alias` varchar(40) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `t_live_role`;
+CREATE TABLE `t_live_role` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `t_live_hero_role`;
+CREATE TABLE `t_live_hero_role` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `hero_id` int NOT NULL,
+  `role_id` int NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

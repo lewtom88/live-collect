@@ -10,6 +10,9 @@ public class Result<T> {
 
     private T data;
 
+    public Result() {
+    }
+
     public Result(T data) {
         success = true;
         this.data = data;
@@ -36,6 +39,7 @@ public class Result<T> {
     }
 
     public void setErrorMsg(String errorMsg) {
+        this.success = false;
         this.errorMsg = errorMsg;
     }
 
@@ -45,5 +49,6 @@ public class Result<T> {
 
     public void setData(T data) {
         this.data = data;
+        this.success = true;
     }
 }

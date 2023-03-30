@@ -52,6 +52,12 @@ public interface UserMapper {
             "<if test='query.principalId != null'> and principal_id=#{query.principalId}</if>" +
             "<if test='query.contactType != null'> and contact_type=#{query.contactType}</if>" +
             "<if test='query.keyword != null and query.keyword != \"\"'> and (name=#{query.keyword} or principal_id=#{query.keyword})</if>" +
-            "order by update_time desc</script>")
+            "<if test='query.sorter == null or query.sorter.size == 0'> order by update_time desc</if>" +
+            "<if test='query.sorter != null'>" +
+            "<foreach collection='query.sorter' index='key' item='value'>" +
+            " order by update_time <if test='value==\"ascend\"'> ASC </if> <if test='value==\"descend\"'> DESC </if>" +
+            "</foreach> " +
+            "</if>" +
+            "</script>")
     List<User> findUsers(@Param("query") UserQuery userQuery);
 }

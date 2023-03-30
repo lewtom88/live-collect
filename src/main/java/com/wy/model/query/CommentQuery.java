@@ -1,10 +1,6 @@
 package com.wy.model.query;
 
-import com.alibaba.fastjson2.util.DateUtils;
-
-import java.util.Date;
-
-public class CommentQuery extends Paging {
+public class CommentQuery extends SortPaging {
 
     private Integer id;
     private String principalId;
@@ -12,6 +8,7 @@ public class CommentQuery extends Paging {
     private String comment;
     private Integer type;
     private Integer rank;
+    private String contactType;
     private String startTime;
     private String endTime;
 
@@ -77,5 +74,13 @@ public class CommentQuery extends Paging {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    public String getContactType() {
+        return contactType;
+    }
+
+    public void setContactType(String contactType) {
+        this.contactType = contactType;
     }
 }

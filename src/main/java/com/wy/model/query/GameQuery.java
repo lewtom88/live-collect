@@ -1,20 +1,18 @@
-package com.wy.model.vo;
+package com.wy.model.query;
 
-public class GameRound {
+public class GameQuery extends SortPaging {
 
     private Integer id;
     private Integer userCount;
-    private String gameResult;
+    private String title;
     private String player;
     private Integer kill;
     private Integer death;
     private Integer assist;
     private String playMode;
-    private String bonusMode;
     private Integer bonusAmount;
+    private String bonusMode;
     private Long createTime;
-    private Long updateTime;
-    private String gameUsers;
 
     public Integer getId() {
         return id;
@@ -22,14 +20,6 @@ public class GameRound {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Long createTime) {
-        this.createTime = createTime;
     }
 
     public Integer getUserCount() {
@@ -40,12 +30,12 @@ public class GameRound {
         this.userCount = userCount;
     }
 
-    public String getGameResult() {
-        return gameResult;
+    public String getTitle() {
+        return title;
     }
 
-    public void setGameResult(String gameResult) {
-        this.gameResult = gameResult;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getPlayer() {
@@ -88,14 +78,6 @@ public class GameRound {
         this.playMode = playMode;
     }
 
-    public String getBonusMode() {
-        return bonusMode;
-    }
-
-    public void setBonusMode(String bonusMode) {
-        this.bonusMode = bonusMode;
-    }
-
     public Integer getBonusAmount() {
         return bonusAmount;
     }
@@ -104,19 +86,19 @@ public class GameRound {
         this.bonusAmount = bonusAmount;
     }
 
-    public Long getUpdateTime() {
-        return updateTime;
+    public String getBonusMode() {
+        return bonusMode;
     }
 
-    public void setUpdateTime(Long updateTime) {
-        this.updateTime = updateTime;
+    public void setBonusMode(String bonusMode) {
+        this.bonusMode = bonusMode;
     }
 
-    public String getGameUsers() {
-        return gameUsers;
+    public Long getCreateTime() {
+        return createTime;
     }
 
-    public void setGameUsers(String gameUsers) {
-        this.gameUsers = gameUsers;
+    public void setCreateTime(Long createTime) {
+        this.createTime = createTime;
     }
 }

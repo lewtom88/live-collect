@@ -9,6 +9,8 @@ public class Comment {
     private Integer giftId;
     private Integer comboCount;
     private Integer rank;
+    private String contactType;
+    private String contactId;
     private Long createTime;
 
     public static final int TYPE_COMMENT = 0;
@@ -83,6 +85,22 @@ public class Comment {
 
     public void setRank(Integer rank) {
         this.rank = rank;
+    }
+
+    public String getContactType() {
+        return contactType;
+    }
+
+    public void setContactType(String contactType) {
+        this.contactType = contactType;
+    }
+
+    public String getContactId() {
+        return contactId;
+    }
+
+    public void setContactId(String contactId) {
+        this.contactId = contactId;
     }
 
     public Long getCreateTime() {

@@ -1,17 +1,12 @@
 package com.wy;
 
-import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.wy.model.Result;
-import com.wy.model.vo.Comment;
-import com.wy.model.vo.KDA;
-import com.wy.model.vo.User;
-import com.wy.model.vo.Watching;
+import com.wy.model.query.HeroQuery;
+import com.wy.model.vo.*;
 import com.wy.model.query.KDAQuery;
-import com.wy.service.CommentService;
-import com.wy.service.UserService;
-import com.wy.service.WatchingService;
+import com.wy.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +29,7 @@ public class LiveController {
     long collectInterval = 1000 * 60;
 
     @Autowired
-    private CommentService commentService;
+    private LiveService liveService;
 
     @Autowired
     private WatchingService watchingService;
@@ -42,35 +37,54 @@ public class LiveController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/start_game")
-    public Result<Integer> startGame() {
-        Integer r = commentService.startNewGame();
-        return new Result<>(r);
-    }
+    @Autowired
+    private ChallengeService challengeService;
 
-    @RequestMapping("/insert_comment")
-    public String insertComment(@RequestBody Map<String, List<List<String>>> body) {
-        List<List<String>> data =  body.get("data");
-        commentService.insertComment(data);
-        logger.warn("insert data : " + data);
-        return "Success!";
+    @Autowired
+    private HeroService heroService;
+
+    @RequestMapping("/query_hero")
+    public Result<PageInfo<Hero>> queryHero(@RequestBody HeroQuery heroQuery) {
+        Result<PageInfo<Hero>> r = new Result<>();
+        List<Hero> list = heroService.getHeros(heroQuery.getKeyword());
+        PageInfo<Hero> pageInfo = new PageInfo<>();
+        pageInfo.setPageNum(heroQuery.getCurrent());
+        pageInfo.setPageSize(heroQuery.getPageSize());
+        pageInfo.setTotal(list.size());
+        int start = (heroQuery.getCurrent() - 1) * heroQuery.getPageSize();
+        int end = start + heroQuery.getPageSize();
+        end = end > list.size() ? list.size() : end;
+        List<Hero> subList = list.subList(start, end);
+        pageInfo.setList(subList);
+
+        return new Result<>(pageInfo);
     }
 
     @RequestMapping("query_kda")
     public Result<PageInfo<KDA>> queryKDA(@RequestBody KDAQuery query) {
-        Object valid = query.getValid();
-        if (valid != null) {
-            if (valid instanceof List) {
-                List validList = (List) valid;
-                if (validList.isEmpty() || validList.size() >= 2) {
-                    query.setValid(null);
-                } else {
-                    query.setValid(validList.get(0));
+        Object status = query.getStatus();
+        if (status != null) {
+            if (status instanceof List) {
+                List validList = (List) status;
+                if (validList.isEmpty() || validList.size() > 2) {
+                    query.setStatus(null);
                 }
+            } else {
+                List list = new ArrayList();
+                list.add(status);
+                query.setStatus(list);
             }
         }
+        if (query.getTimeRange() != null) {
+            long time = System.currentTimeMillis() - query.getTimeRange() * 60 * 1000;
+            query.setStartTime(time);
+        }
+        if ("error".equalsIgnoreCase(query.getPlayer())) {
+            query.setPlayer(null);
+            query.setErrorFlag(Boolean.TRUE);
+        }
         PageHelper.startPage(query.getCurrent(), query.getPageSize());
-        List<KDA> list = commentService.findKDA(query);
+        List<KDA> list = liveService.findKDA(query);
         PageInfo<KDA> pageInfo = new PageInfo(list);
 
         return new Result<>(pageInfo);
@@ -126,7 +140,9 @@ public class LiveController {
                 Comment c = new Comment();
                 String content = (String) commentFeed.get("content");
                 parseUser(commentFeed, c);
-                c.setComment(content);
+                if (content != null) {
+                    c.setComment(content.trim());
+                }
                 c.setType(Comment.TYPE_COMMENT);
                 list.add(c);
             }
@@ -156,7 +172,7 @@ public class LiveController {
             }
         }
 
-        commentService.create(list);
+        liveService.create(list);
     }
 
     private void parseUser(Map<String, Object> commentFeed, Comment c) {
