@@ -38,7 +38,7 @@ public class GameController {
         Result<Integer> r = new Result<>();
         GameRound game = liveService.loadCurrentGame();
         if (game == null || GameUtils.isClose(game)) {
-            r.setErrorMsg("请先设置挑战选手");
+            r.setErrorMsg("没有需要计时的比赛");
             return r;
         }
         if (GameUtils.isTiming(game)) {
@@ -46,7 +46,7 @@ public class GameController {
             return r;
         }
         liveService.startTiming(game);
-        r.setData(game.getId());
+        r.setData(game.getGameId());
 
         return r;
     }
@@ -93,7 +93,7 @@ public class GameController {
     public Result<PageInfo<GameRound>> queryGame(@RequestBody GameQuery query) {
         PageHelper.startPage(query.getCurrent(), query.getPageSize());
         List<GameRound> list = liveService.findGames(query);
-        List<Integer> gameIds = list.stream().map(g -> g.getId()).collect(Collectors.toList());
+        List<Integer> gameIds = list.stream().map(g -> g.getGameId()).collect(Collectors.toList());
 
         List<Challenge> challenges = challengeService.findByIds(gameIds);
         Map<Integer, StringBuilder> builderMap = new HashMap<>();
@@ -103,11 +103,13 @@ public class GameController {
             if (sb.length() == 0) {
                 sb.append(c.getContactType()).append(":");
             }
-            sb.append(c.getContactId());
+            sb.append(c.getName()).append(";");
         }
         for (GameRound gameRound : list) {
-            StringBuilder sb = builderMap.get(gameRound.getId());
-            gameRound.setGameUsers(sb.toString());
+            StringBuilder sb = builderMap.get(gameRound.getGameId());
+            if (sb != null) {
+                gameRound.setGameUsers(sb.toString());
+            }
         }
 
         PageInfo<GameRound> pageInfo = new PageInfo(list);

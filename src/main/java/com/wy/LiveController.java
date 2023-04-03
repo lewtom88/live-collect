@@ -75,10 +75,7 @@ public class LiveController {
                 query.setStatus(list);
             }
         }
-        if (query.getTimeRange() != null) {
-            long time = System.currentTimeMillis() - query.getTimeRange() * 60 * 1000;
-            query.setStartTime(time);
-        }
+
         if ("error".equalsIgnoreCase(query.getPlayer())) {
             query.setPlayer(null);
             query.setErrorFlag(Boolean.TRUE);

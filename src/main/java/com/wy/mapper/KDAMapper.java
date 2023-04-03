@@ -22,7 +22,6 @@ public interface KDAMapper {
             @Result(property = "principalId", column = "principal_id"),
             @Result(property = "contactType", column = "contact_type"),
             @Result(property = "contactId", column = "contact_id"),
-            @Result(property = "contactNick", column = "contact_nick"),
             @Result(property = "kill", column = "kill_count"),
             @Result(property = "gameResult", column = "game_result"),
             @Result(property = "gameId", column = "game_id"),
@@ -30,7 +29,7 @@ public interface KDAMapper {
             @Result(property = "updateTime", column = "update_time"),
     })
     @Select("<script>select k.id,k.principal_id,k.name,k.comment,k.status,k.kill_count,k.death,k.assist,k.player,k.player_role," +
-            "k.game_result,k.game_id,k.create_time,u.contact_id,u.contact_nick,u.contact_type " +
+            "k.game_result,k.game_id,k.create_time,u.contact_id,u.contact_type " +
             "from t_live_kda k LEFT JOIN t_live_user u ON k.principal_id = u.principal_id where 1 = 1" +
             "<if test='query.principalId != null'> and k.principal_id=#{query.principalId}</if>" +
             "<if test='query.name != null'> and k.name=#{query.name}</if>" +
@@ -38,7 +37,7 @@ public interface KDAMapper {
             "<if test='query.kill != null'> and k.kill_count = #{query.kill}</if>" +
             "<if test='query.death != null'> and k.death = #{query.death}</if>" +
             "<if test='query.assist != null'> and k.assist = #{query.assist}</if>" +
-            "<if test='query.player != null'> and k.player = #{query.player}</if>" +
+            "<if test='query.player != null and query.player != \"\"'> and k.player = #{query.player}</if>" +
             "<if test='query.playerRole != null'> and k.player_role = #{query.playerRole}</if>" +
             "<if test='query.gameId != null'> and k.game_id = #{query.gameId}</if>" +
             "<if test='query.gameResult != null'> and k.game_result = #{query.gameResult}</if>" +
@@ -56,7 +55,6 @@ public interface KDAMapper {
             @Result(property = "principalId", column = "principal_id"),
             @Result(property = "contactType", column = "contact_type"),
             @Result(property = "contactId", column = "contact_id"),
-            @Result(property = "contactNick", column = "contact_nick"),
             @Result(property = "kill", column = "kill_count"),
             @Result(property = "gameResult", column = "game_result"),
             @Result(property = "gameId", column = "game_id"),

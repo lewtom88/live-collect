@@ -9,8 +9,6 @@ public class User {
 
     private String contactId;
 
-    private String contactNick;
-
     private String contactType;
 
     //亲密程度
@@ -59,14 +57,6 @@ public class User {
 
     public void setContactId(String contactId) {
         this.contactId = contactId;
-    }
-
-    public String getContactNick() {
-        return contactNick;
-    }
-
-    public void setContactNick(String contactNick) {
-        this.contactNick = contactNick;
     }
 
     public String getContactType() {

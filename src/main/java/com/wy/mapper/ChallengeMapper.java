@@ -19,20 +19,20 @@ public interface ChallengeMapper {
     @Results({
             @Result(property = "gameId", column = "game_id"),
             @Result(property = "contactType", column = "contact_type"),
-            @Result(property = "contactId", column = "contact_nick"),
+            @Result(property = "contactId", column = "contact_id"),
             @Result(property = "createTime", column = "create_time"),
     })
-    @Select("SELECT c.game_id,c.name,u.contact_type,u.contact_nick,c.create_time from t_live_challenge c " +
+    @Select("SELECT c.game_id,c.name,u.contact_type,u.contact_id,c.create_time from t_live_challenge c " +
             "LEFT JOIN t_live_user u ON c.principal_id = u.principal_id order by c.create_time desc")
     List<Challenge> find(@Param("query") ChallengeQuery query);
 
     @Results({
             @Result(property = "gameId", column = "game_id"),
             @Result(property = "contactType", column = "contact_type"),
-            @Result(property = "contactId", column = "contact_nick"),
+            @Result(property = "contactId", column = "contact_id"),
             @Result(property = "createTime", column = "create_time"),
     })
-    @Select("<script>SELECT c.game_id,c.name,u.contact_type,u.contact_nick,c.create_time from t_live_challenge c " +
+    @Select("<script>SELECT c.game_id,c.name,u.contact_type,u.contact_id,c.create_time from t_live_challenge c " +
             "LEFT JOIN t_live_user u ON c.principal_id = u.principal_id where c.game_id in " +
             "<foreach item='item' index='index' collection='idList' " +
             "open='(' separator=',' close=')'>#{item}</foreach>" +

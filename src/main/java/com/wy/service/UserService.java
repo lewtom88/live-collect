@@ -1,17 +1,17 @@
 package com.wy.service;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.wy.mapper.UserMapper;
 import com.wy.model.query.UserQuery;
 import com.wy.model.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class UserService {
@@ -19,6 +19,9 @@ public class UserService {
     @Autowired
     UserMapper userMapper;
 
+    /**
+     * 确保不用频繁更新
+     */
     private Set<String> updatedUsers = new HashSet<>();
 
     /**
@@ -41,5 +44,10 @@ public class UserService {
     public List<User> queryUsers(UserQuery query) {
         List<User> list = userMapper.findUsers(query);
         return list;
+    }
+
+    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
+    public void resetUpdateUsers() {
+        updatedUsers = new HashSet<>();
     }
 }

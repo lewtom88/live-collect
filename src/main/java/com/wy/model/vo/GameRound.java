@@ -2,7 +2,7 @@ package com.wy.model.vo;
 
 public class GameRound {
 
-    private Integer id;
+    private Integer gameId;
     private Integer userCount;
     private String gameResult;
     private String player;
@@ -16,12 +16,12 @@ public class GameRound {
     private Long updateTime;
     private String gameUsers;
 
-    public Integer getId() {
-        return id;
+    public Integer getGameId() {
+        return gameId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setGameId(Integer gameId) {
+        this.gameId = gameId;
     }
 
     public Long getCreateTime() {

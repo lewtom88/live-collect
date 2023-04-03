@@ -22,14 +22,14 @@ public interface UserMapper {
             "</script>")
     void batchSaveOrUpdateIntimacy(@Param("list") List<User> list);
 
-    @Insert("<script>insert into t_live_user (principal_id,name,contact_type,contact_nick,create_time,update_time) values " +
+    @Insert("<script>insert into t_live_user (principal_id,name,contact_type,contact_id,create_time,update_time) values " +
             "<foreach collection ='list' item='user' separator =','> " +
             "(#{user.principalId,jdbcType=VARCHAR},#{user.name,jdbcType=VARCHAR}," +
-            "#{user.contactType,jdbcType=VARCHAR},#{user.contactNick,jdbcType=VARCHAR}," +
+            "#{user.contactType,jdbcType=VARCHAR},#{user.contactId,jdbcType=VARCHAR}," +
             "#{user.createTime,jdbcType=BIGINT},#{user.createTime,jdbcType=BIGINT}) " +
             "</foreach>" +
             "ON duplicate KEY UPDATE " +
-            "name=values(name), contact_type=values(contact_type), contact_nick=values(contact_nick)," +
+            "name=values(name), contact_type=values(contact_type), contact_id=values(contact_id)," +
             "update_time=values(create_time)" +
             "</script>")
     void batchSaveOrUpdateContact(@Param("list") List<User> list);
@@ -41,13 +41,12 @@ public interface UserMapper {
             @Result(property = "wealthGrade", column = "wealth_grade"),
             @Result(property = "contactType", column = "contact_type"),
             @Result(property = "contactId", column = "contact_id"),
-            @Result(property = "contactNick", column = "contact_nick"),
             @Result(property = "badgeKey", column = "badge_key"),
             @Result(property = "createTime", column = "create_time"),
             @Result(property = "updateTime", column = "update_time"),
     })
     @Select("<script>select id,principal_id,name,intimacy_level,fans_group_intimacy_level,wealth_grade," +
-            "badge_key,contact_id,contact_nick,contact_type,create_time,update_time from t_live_user where 1 = 1" +
+            "badge_key,contact_id,contact_type,create_time,update_time from t_live_user where 1 = 1" +
             "<if test='query.name != null'> and name=#{query.name}</if>" +
             "<if test='query.principalId != null'> and principal_id=#{query.principalId}</if>" +
             "<if test='query.contactType != null'> and contact_type=#{query.contactType}</if>" +

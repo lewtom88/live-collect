@@ -15,7 +15,6 @@ public class KDA {
     private Long createTime;
     private int status;
     private String contactId;
-    private String contactNick;
     private String contactType;
 
     public static final int STATUS_INVALID = 0;
@@ -132,14 +131,6 @@ public class KDA {
 
     public void setContactId(String contactId) {
         this.contactId = contactId;
-    }
-
-    public String getContactNick() {
-        return contactNick;
-    }
-
-    public void setContactNick(String contactNick) {
-        this.contactNick = contactNick;
     }
 
     public String getContactType() {

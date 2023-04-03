@@ -11,6 +11,8 @@ import com.wy.model.vo.KDA;
 import com.wy.model.vo.User;
 import com.wy.model.query.CommentQuery;
 import com.wy.model.query.KDAQuery;
+import com.wy.util.GameUtils;
+import jakarta.annotation.PostConstruct;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
@@ -45,6 +48,8 @@ public class LiveService {
 
     private Set<String> guessUsers = new HashSet<>();
 
+    private List<String> resultList = new ArrayList<>();
+
     /**
      * 完全匹配
      * 例如： 上官婉儿 32 1 2
@@ -62,6 +67,19 @@ public class LiveService {
      */
     private Pattern pEndMath = Pattern.compile(
             ".+([赢输]|ying|shu)\\s*\\d{1,2}(\\s+|-)\\d{1,2}(\\s+|-)\\d{1,2}$", Pattern.CASE_INSENSITIVE);
+
+    @PostConstruct
+    private void initialize() {
+        resultList.add("输");
+        resultList.add("shu");
+        resultList.add("赢");
+        resultList.add("ying");
+
+        GameRound current = loadCurrentGame();
+        if (!GameUtils.isClose(current)) {
+            currentGame = current;
+        }
+    }
 
     @Test
     public void testFullMath() {
@@ -90,18 +108,17 @@ public class LiveService {
     public GameRound createGame() {
         GameRound newGame = new GameRound();
         Integer id = gameRoundMapper.insert(newGame);
-        newGame.setId(id);
         currentGame = newGame;
 
         return newGame;
     }
 
     public GameRound loadCurrentGame() {
-        GameRound lastGame = gameRoundMapper.findCurrent();
-        if (lastGame != null) {
-            lastGame.setUserCount(guessUsers.size());
+        GameRound currentGame = gameRoundMapper.findCurrent();
+        if (currentGame != null) {
+            currentGame.setUserCount(guessUsers.size());
         }
-        return lastGame;
+        return currentGame;
     }
 
     public GameRound loadLastClosed() {
@@ -123,7 +140,7 @@ public class LiveService {
         //更新Winner
         KDA kda = new KDA();
         kda.setCreateTime(gameRound.getCreateTime());
-        kda.setGameId(gameRound.getId());
+        kda.setGameId(gameRound.getGameId());
         kda.setGameResult(gameRound.getGameResult());
         kda.setPlayer(gameRound.getPlayer());
         kda.setKill(gameRound.getKill());
@@ -131,7 +148,7 @@ public class LiveService {
         kda.setAssist(gameRound.getAssist());
         kdaMapper.updateWinner(kda);
 
-        return gameRound.getId();
+        return gameRound.getGameId();
     }
 
     /**
@@ -160,18 +177,23 @@ public class LiveService {
                 }
                 parseGuessing1(kda);
                 if (currentGame != null) {
-                    kda.setGameId(currentGame.getId());
+                    kda.setGameId(currentGame.getGameId());
                 }
 
                 kdaList.add(kda);
             } else if (isContactMessage(c.getComment())) {
+                String comment = c.getComment().toLowerCase();
                 c.setType(Comment.TYPE_CONTACT_UPDATE);
                 User user = new User();
                 user.setCreateTime(current);
                 user.setPrincipalId(c.getPrincipalId());
                 user.setName(c.getName());
-                user.setContactType(isQQ(c.getComment()) ? "QQ" : "微信");
-                user.setContactNick(c.getComment().substring(3));
+                if (isQQPartMatch(comment) || isQQFullMatch(comment)) {
+                    user.setContactType("QQ");
+                } else {
+                    user.setContactType("微信");
+                }
+                user.setContactId(parseContactId(comment));
                 contactList.add(user);
             }
         }
@@ -187,6 +209,24 @@ public class LiveService {
         }
     }
 
+    private String parseContactId(String str) {
+        if (isQQFullMatch(str)) {
+            return null;
+        } else if (isWechatFullMatch(str)) {
+            return null;
+        } else if (isQQPartMatch(str)) {
+            return str.substring(2).trim();
+        } else if (isWechatPartMatch1(str)) {
+            return str.substring(6).trim();
+        } else if (isWechatPartMatch(str)) {
+            return str.substring(2).trim();
+        } else {
+            logger.error("failed to parse the contact id " + str);
+        }
+
+        return null;
+    }
+
     private boolean isGuessingMessage(String key) {
         if (key == null) {
             return false;
@@ -195,31 +235,45 @@ public class LiveService {
     }
 
     private boolean isContactMessage(String key) {
-        if (key == null || key.length() < 4) {
+        if (key == null) {
             return false;
         }
 
-        return isQQ(key) || isWeChat(key);
+        String lc = key.toLowerCase();
+        return isQQFullMatch(lc) || isQQPartMatch(lc) || isWechatFullMatch(lc) || isWechatPartMatch(lc);
     }
 
-    private boolean isQQ(String key) {
-        key = key.toLowerCase();
-        return key.startsWith("qq ") || key.startsWith("qq:") || key.startsWith("qq：");
+    private boolean isQQPartMatch(String key) {
+        return key.startsWith("qq ");
     }
 
-    private boolean isWeChat(String key) {
-        return key.startsWith("微信 ") || key.startsWith("微信:") || key.startsWith("微信：");
+    private boolean isQQFullMatch(String key) {
+        return key.equals("qq") || key.equals("q");
+    }
+
+    private boolean isWechatPartMatch(String key) {
+        return key.startsWith("微信 ") || key.startsWith("vx ") || key.startsWith("wx ") || isWechatPartMatch1(key);
+    }
+
+    private boolean isWechatPartMatch1(String key) {
+        return key.startsWith("weixin ") || key.startsWith("wechat ");
+    }
+
+    private boolean isWechatFullMatch(String key) {
+        return key.equals("微信") || key.equals("vx") || key.equals("wx") || key.equals("weixin")
+                || key.equals("wechat") || key.equals("v");
     }
 
     @Test
     public void test1() {
         Assert.assertTrue(isGuessingMessage("射手赢 3 2 1"));
         Assert.assertFalse(isGuessingMessage("射手赢 3 2 "));
+        heroService = new HeroService();
 
         KDA kda = new KDA();
         kda.setComment("射手赢 3 2 1");
         LiveService cs = new LiveService();
-        cs.parseGuessing1(kda);
+        parseGuessing1(kda);
         Assert.assertEquals(kda.getPlayer(), "射手");
         Assert.assertEquals(kda.getGameResult(), "赢");
         Assert.assertEquals(kda.getKill().intValue(), 3);
@@ -257,7 +311,7 @@ public class LiveService {
     @Test
     public void test() {
         KDA kda = new KDA();
-        kda.setComment("kda 射手赢 3 2 1");
+        kda.setComment("射手赢 3 2 1");
         LiveService cs = new LiveService();
         cs.parseGuessing(kda);
         Assert.assertEquals(kda.getPlayer(), "射手");
@@ -313,6 +367,24 @@ public class LiveService {
         Assert.assertEquals(kda.getAssist().intValue(), 10);
     }
 
+    public static void main(String[] args) {
+        String s = "嬴政 赢 1 3 5";
+        System.out.println(s.split("赢|输|ying|shu").length);
+        Pattern p = Pattern.compile("赢|输|ying|shu");
+        Matcher m = p.matcher(s);
+        System.out.println(new LiveService().findLastIndex(s));
+    }
+
+    private int findLastIndex(String s) {
+        int max = -1;
+        for (String res : resultList) {
+            int last = s.lastIndexOf(res);
+            if (last > max) {
+                max = last;
+            }
+        }
+        return max;
+    }
     /**
      * 4 cases:
      *
@@ -325,24 +397,24 @@ public class LiveService {
      */
     private void parseGuessing1(KDA kda) {
         String c = kda.getComment().toLowerCase();
-        int index = c.lastIndexOf("[赢输]|ying|shu");
-        String heroName = c.substring(0, index);
+        int index = findLastIndex(c);
+        String heroName = c.substring(0, index).trim();
         String realName = heroService.matchHero(heroName);
-        kda.setName(realName);
+        kda.setPlayer(realName);
 
         String kdaResult;
         String gameResult = c.substring(index, index + 1);
         if (gameResult.equals("y")) {
             gameResult = "赢";
-            kdaResult = c.substring(index + 5);
+            kdaResult = c.substring(index + 4);
         } else if (gameResult.equals("s")) {
             gameResult = "输";
-            kdaResult = c.substring(index + 4);
+            kdaResult = c.substring(index + 3);
         } else {
             kdaResult = c.substring(index + 1);
         }
 
-        String[] ca = kdaResult.split("\\s+|-+");
+        String[] ca = kdaResult.trim().split("\\s+|-+");
 
         kda.setGameResult(gameResult);
         kda.setKill(Integer.parseInt(ca[0]));
@@ -431,14 +503,22 @@ public class LiveService {
     }
 
     public List<KDA> findKDA(KDAQuery query) {
+        if (query.getTimeRange() != null && currentGame != null && currentGame.getCreateTime() != null) {
+            query.setStartTime(currentGame.getCreateTime());
+            query.setEndTime(currentGame.getCreateTime() + query.getTimeRange() * 1000 * 60);
+        }
         return kdaMapper.find(query);
     }
 
     public void startTiming(GameRound game) {
         //重置竞猜用户
         guessUsers = new HashSet<>();
+        if (currentGame == null) {
+            currentGame = loadCurrentGame();
+        }
 
         long current = System.currentTimeMillis();
+        currentGame.setCreateTime(current);
         game.setCreateTime(current);
         gameRoundMapper.updateTime(game);
     }

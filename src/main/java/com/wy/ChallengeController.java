@@ -54,9 +54,9 @@ public class ChallengeController {
         }
 
         if (list != null && !list.isEmpty()) {
-            challengeService.createGroupByKDA(list, game.getId());
+            challengeService.createGroupByKDA(list, game.getGameId());
         }
-        r.setData(game.getId());
+        r.setData(game.getGameId());
 
         return r;
     }
@@ -74,9 +74,9 @@ public class ChallengeController {
             game = liveService.createGame();
         }
         if (list != null && !list.isEmpty()) {
-            challengeService.createGroupByComment(list, game.getId());
+            challengeService.createGroupByComment(list, game.getGameId());
         }
-        r.setData(game.getId());
+        r.setData(game.getGameId());
 
         return r;
     }

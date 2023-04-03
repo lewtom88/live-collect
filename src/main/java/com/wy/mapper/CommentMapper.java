@@ -29,10 +29,10 @@ public interface CommentMapper {
             @Result(property = "principalId", column = "principal_id"),
             @Result(property = "createTime", column = "create_time"),
             @Result(property = "contactType", column = "contact_type"),
-            @Result(property = "contactId", column = "contact_nick"),
+            @Result(property = "contactId", column = "contact_id"),
     })
     @Select("<script>select c.id,c.principal_id,c.name,c.comment,c.c_type,c.gift_id,c.combo_count,c.fans_rank," +
-            "c.create_time,u.contact_type,u.contact_nick " +
+            "c.create_time,u.contact_type,u.contact_id " +
             "from t_live_comment c LEFT JOIN t_live_user u ON c.principal_id=u.principal_id where 1 = 1" +
             "<if test='query.name != null'> and c.name=#{query.name}</if>" +
             "<if test='query.principalId != null'> and c.principal_id=#{query.principalId}</if>" +

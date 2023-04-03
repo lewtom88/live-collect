@@ -45,7 +45,6 @@ CREATE TABLE `t_live_user` (
   `wealth_grade` int DEFAULT NULL,
   `badge_key` varchar(100) DEFAULT NULL,
   `contact_id` varchar(100) DEFAULT NULL,
-  `contact_nick` varchar(150) DEFAULT NULL,
   `contact_type` varchar(20) DEFAULT NULL,
   `create_time` bigint DEFAULT NULL,
   `update_time` bigint DEFAULT NULL,

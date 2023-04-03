@@ -111,36 +111,45 @@ public class HeroService {
         logger.info("Initializing map for matching hero.");
         for (Hero hero : heroList) {
             String name = hero.getName();
+            logger.debug("Init Hero Map 1 {} -> {}", name, name);
             allMatchNameMap.put(name, name);
-            initPYMapping(name);
+            initPYMapping(name, name);
             if (hero.getAlias() != null) {
-                allMatchNameMap.put(hero.getAlias(), hero.getName());
-                initPYMapping(hero.getAlias());
+                String[] aliasArray = hero.getAlias().split(",");
+                for (String alias : aliasArray) {
+                    logger.debug("Init Hero Map 2 {} -> {}", alias, name);
+                    allMatchNameMap.put(alias, name);
+                    initPYMapping(alias, name);
+                }
             }
         }
     }
 
-    private void initPYMapping(String name) {
-        List<String> pyNames = generatePYPossible(name);
+    private void initPYMapping(String key, String name) {
+        List<String> pyNames = generatePYPossible(key);
         for (String pyName : pyNames) {
             if (allMatchNameMap.containsKey(pyName)) {
-                String samePYName = allMatchNameMap.remove(pyName);
-                List<String> nameTones = generatePYPossible(name, true);
+                String samePYName = allMatchNameMap.get(pyName);
+                allMatchNameMap.remove(pyName);
+                List<String> nameTones = generatePYPossible(key, true);
                 List<String> samePYTones = generatePYPossible(samePYName, true);
                 for (String nameTone : nameTones) {
                     if (tonePYNameMap.containsKey(nameTone)) {
-                        throw new RuntimeException("两个英雄的发音完全相同，无法处理。" + name);
+                        throw new RuntimeException("两个英雄的发音完全相同，无法处理。" + key);
                     }
+                    logger.warn("Init Hero PYMap {} -> {}", nameTone, name);
                     tonePYNameMap.put(nameTone, name);
 
                 }
                 for (String samePYTone : samePYTones) {
                     if (tonePYNameMap.containsKey(samePYTone)) {
-                        throw new RuntimeException("两个英雄的发音完全相同，无法处理。" + name);
+                        throw new RuntimeException("两个英雄的发音完全相同，无法处理。" + key);
                     }
+                    logger.warn("Init Hero PYMap {} -> {}", samePYTone, samePYName);
                     tonePYNameMap.put(samePYTone, samePYName);
                 }
             } else {
+                logger.debug("Init Hero Map 3 {} -> {}", pyName, name);
                 allMatchNameMap.put(pyName, name);
             }
         }
@@ -165,7 +174,7 @@ public class HeroService {
         //search by PY with tone
         List<String> pyWithTone = generatePYPossible(keyword, true);
         for (String pyTone : pyWithTone) {
-            result = allMatchNameMap.get(pyTone);
+            result = tonePYNameMap.get(pyTone);
             if (result != null) {
                 return  result;
             }
