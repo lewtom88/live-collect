@@ -2,6 +2,7 @@ package com.wy.mapper;
 
 import com.wy.model.vo.Comment;
 import com.wy.model.query.CommentQuery;
+import com.wy.model.vo.TopComment;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -57,4 +58,11 @@ public interface CommentMapper {
             "fans_rank,create_time from t_live_comment where id = #{id}")
     Comment findById(Integer id);
 
+    @Select("select count(0) from t_live_comment where create_time >= #{start} and create_time < #{end}" +
+            "<if test='type != null'> and c_type= #{type}</if>")
+    int statCount(long start, long end, Integer type);
+
+    @Select("select * from (select name, count(0) as count from t_live_comment " +
+            "where create_time >= #{start} and create_time < #{end} group by name) as c_top order by c desc limit 10")
+    List<TopComment> top10ByName(long start, long end);
 }

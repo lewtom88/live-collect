@@ -1,10 +1,10 @@
 package com.wy.model.vo;
 
-public class Watching {
+public class Watch {
 
     private Integer id;
 
-    private Integer watching;
+    private String watch;
 
     private Integer likes;
 
@@ -18,12 +18,12 @@ public class Watching {
         this.id = id;
     }
 
-    public Integer getWatching() {
-        return watching;
+    public String getWatch() {
+        return watch;
     }
 
-    public void setWatching(Integer watching) {
-        this.watching = watching;
+    public void setWatch(String watch) {
+        this.watch = watch;
     }
 
     public Integer getLikes() {

@@ -73,4 +73,7 @@ public interface KDAMapper {
             " and game_id = #{gameId} and player = #{player} and kill_count = #{kill} " +
             "and death = #{death} and assist = #{assist}")
     void updateWinner(KDA kda);
+
+    @Select("select count(0) from t_live_kda where create_time >= #{start} and create_time <= #{end}")
+    int statCount(long start, long end);
 }

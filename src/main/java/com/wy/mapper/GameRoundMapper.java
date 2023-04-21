@@ -60,4 +60,9 @@ public interface GameRoundMapper {
     @Select("select * from t_live_game order by create_time desc")
     List<GameRound> findGames(GameQuery query);
 
+    @Select("select count(0) from t_live_game where create_time >= #{start} and create_time <= #{end}")
+    int statCount(long start, long end);
+
+    @Select("select sum(bonus_amount) from t_live_game where create_time >= #{start} and create_time <= #{end}")
+    int statBonus(long start, long end);
 }

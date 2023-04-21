@@ -3,6 +3,8 @@ package com.wy.service;
 import com.wy.mapper.UserMapper;
 import com.wy.model.query.UserQuery;
 import com.wy.model.vo.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,8 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class UserService {
+
+    Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     UserMapper userMapper;
@@ -48,6 +52,7 @@ public class UserService {
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
     public void resetUpdateUsers() {
+        logger.warn("Reset all the cached users.");
         updatedUsers = new HashSet<>();
     }
 }

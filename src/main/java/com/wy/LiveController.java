@@ -25,14 +25,14 @@ public class LiveController {
     //收集时间
     long collectTime = System.currentTimeMillis();
 
-    //收集时间间隔
-    long collectInterval = 1000 * 60;
+    //收集时间间隔，半小时一次
+    long collectInterval = 1000 * 60 * 10;
 
     @Autowired
     private LiveService liveService;
 
     @Autowired
-    private WatchingService watchingService;
+    private StatService statService;
 
     @Autowired
     private UserService userService;
@@ -42,6 +42,9 @@ public class LiveController {
 
     @Autowired
     private HeroService heroService;
+
+    @Autowired
+    private WatchService watchService;
 
     @RequestMapping("/query_hero")
     public Result<PageInfo<Hero>> queryHero(@RequestBody HeroQuery heroQuery) {
@@ -89,7 +92,7 @@ public class LiveController {
 
     @RequestMapping("socket_collect")
     public String socketCollect(@RequestBody Map<String, Object> body) {
-        collectWatching(body);
+        collectWatches(body);
         collectComments(body);
         collectUsers(body);
         return "success";
@@ -180,7 +183,7 @@ public class LiveController {
         c.setPrincipalId(principalId);
     }
 
-    private void collectWatching(Map<String, Object> body) {
+    private void collectWatches(Map<String, Object> body) {
         long current = System.currentTimeMillis();
         if ((current - collectTime) < collectInterval) {
             return;
@@ -190,16 +193,13 @@ public class LiveController {
         String watchingCount = (String) body.get("displayWatchingCount");
         String likeCount = (String) body.get("displayLikeCount");
         int likes = Integer.parseInt(likeCount);
-        int watches = 0;
-        if ("1万".equals(watchingCount)) {
-            watches = 10000;
-        }
-        Watching watching = new Watching();
-        watching.setLikes(likes);
-        watching.setWatching(watches);
-        watchingService.insert(watching);
 
-        logger.info("Insert watching: {} - {} and likes: {}", watchingCount, watches, likes);
+        Watch watch = new Watch();
+        watch.setLikes(likes);
+        watch.setWatch(watchingCount);
+        watchService.collect(watch);
+
+        logger.info("Insert watching: {} - {} and likes: {}", watchingCount, watchingCount, likes);
     }
 
     @RequestMapping("/test")

@@ -55,10 +55,10 @@ CREATE TABLE `t_live_user` (
   KEY `t_live_user_create_time_IDX` (`update_time`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-DROP TABLE IF EXISTS `t_live_watching`;
-CREATE TABLE `t_live_watching` (
+DROP TABLE IF EXISTS `t_live_watch`;
+CREATE TABLE `t_live_watch` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `watching` int DEFAULT NULL,
+  `watch` varchar(10) DEFAULT NULL,
   `likes` int DEFAULT NULL,
   `create_time` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -116,5 +116,31 @@ CREATE TABLE `t_live_hero_role` (
   `id` int NOT NULL AUTO_INCREMENT,
   `hero_id` int NOT NULL,
   `role_id` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `t_live_stat_hour`;
+CREATE TABLE `t_live_stat_hour` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `watch_count` int DEFAULT NULL,
+  `comment_count` int DEFAULT NULL,
+  `kda_count` int DEFAULT NULL,
+  `gift_count` int DEFAULT NULL,
+  `like_count` int DEFAULT NULL,
+  `game_count` int DEFAULT NULL,
+  `bonus_total` int DEFAULT NULL,
+  `contact_update_count` int DEFAULT NULL,
+  `create_time` bigint DEFAULT NULL,
+  `update_time` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `t_live_stat_comment`;
+CREATE TABLE `t_live_stat_comment` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `principal_id` varchar(100) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL,
+  `comment_count` int DEFAULT NULL,
+  KEY `t_live_stat_comment_count_IDX` (`comment_count`) USING BTREE,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
