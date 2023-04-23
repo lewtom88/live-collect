@@ -125,7 +125,7 @@ insert into t_live_hero (ID, name, alias) values (118, '米莱狄', null);
 insert into t_live_hero (ID, name, alias) values (119, '沈梦溪', '炸弹猫');
 insert into t_live_hero (ID, name, alias) values (120, '西施', null);
 insert into t_live_hero (ID, name, alias) values (123, '海月', null);
-
+insert into t_live_hero (ID, name, alias) values (124, '姬小满', '小满');
 
 insert into t_live_hero_role (hero_id, role_id) values (1, 4);
 insert into t_live_hero_role (hero_id, role_id) values (2, 4);
@@ -306,3 +306,7 @@ insert into t_live_hero_role (hero_id, role_id) values (29, 5);
 insert into t_live_hero_role (hero_id, role_id) values (8, 5);
 insert into t_live_hero_role (hero_id, role_id) values (6, 5);
 insert into t_live_hero_role (hero_id, role_id) values (22, 5);
+
+
+insert into t_live_hero_role (hero_id, role_id) values (124, 4);
+insert into t_live_hero_role (hero_id, role_id) values (124, 5);
