@@ -1,3 +1,5 @@
+use sys;
+
 DROP TABLE IF EXISTS `t_live_comment`;
 CREATE TABLE `t_live_comment` (
   `id` int NOT NULL AUTO_INCREMENT,
