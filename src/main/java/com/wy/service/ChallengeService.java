@@ -64,6 +64,9 @@ public class ChallengeService {
     }
 
     public List<Challenge> findByIds(List<Integer> idList) {
+        if (idList == null || idList.isEmpty()) {
+            return new ArrayList<>();
+        }
         return challengeMapper.findByIds(idList);
     }
 

@@ -76,7 +76,7 @@ public class LiveService {
         resultList.add("ying");
 
         GameRound current = loadCurrentGame();
-        if (!GameUtils.isClose(current)) {
+        if (current != null && !GameUtils.isClose(current)) {
             currentGame = current;
         }
     }
