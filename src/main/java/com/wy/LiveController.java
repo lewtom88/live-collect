@@ -92,7 +92,7 @@ public class LiveController {
         return new Result<>(pageInfo);
     }
 
-    @RequestMapping("socket_collect")
+    @RequestMapping("/socket_collect")
     public String socketCollect(@RequestBody Map<String, Object> body) {
         collectWatches(body);
         collectComments(body);

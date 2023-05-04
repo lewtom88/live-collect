@@ -1,5 +1,6 @@
 package com.wy.service;
 
+import com.wy.event.MessageEventManager;
 import com.wy.mapper.CommentMapper;
 import com.wy.mapper.GameRoundMapper;
 import com.wy.mapper.KDAMapper;
@@ -49,6 +50,8 @@ public class LiveService {
     private Set<String> guessUsers = new HashSet<>();
 
     private List<String> resultList = new ArrayList<>();
+
+    private MessageEventManager eventManager = new MessageEventManager();
 
     /**
      * 完全匹配
@@ -195,6 +198,10 @@ public class LiveService {
                 }
                 user.setContactId(parseContactId(comment));
                 contactList.add(user);
+            }
+
+            if (c.getType() == Comment.TYPE_COMMENT) {
+                eventManager.receive(c.getComment());
             }
         }
 
@@ -527,4 +534,15 @@ public class LiveService {
        return commentMapper.findById(id);
     }
 
+    public Map<String, Integer> getVideoComments() {
+        return eventManager.getVideoComments();
+    }
+
+    public void turnOffVideo() {
+        eventManager.turnOff();
+    }
+
+    public void turnOnVideo() {
+        eventManager.turnOn();
+    }
 }

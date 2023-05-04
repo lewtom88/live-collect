@@ -18,7 +18,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping("query_fans")
+    @RequestMapping("/query_fans")
     public Result<PageInfo<User>> queryFans(@RequestBody UserQuery query) {
         String key = query.getKeyword();
         if ("QQ".equalsIgnoreCase(key) || "微信".equals(key)) {
