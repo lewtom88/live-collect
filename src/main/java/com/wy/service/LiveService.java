@@ -545,4 +545,8 @@ public class LiveService {
     public void turnOnVideo() {
         eventManager.turnOn();
     }
+
+    public MessageEventManager getEventManager() {
+        return eventManager;
+    }
 }

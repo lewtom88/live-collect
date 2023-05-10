@@ -1,6 +1,7 @@
 package com.wy.event;
 
 import com.wy.event.video.VideoDriver;
+import com.wy.event.video.VideoWinDriver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,17 +20,17 @@ public class MessageEventManager {
     public MessageEventManager() {
         eventSwitch = new AtomicBoolean(false);
         events = new ArrayList<>();
-        videoDriver = new VideoDriver();
+        videoDriver = new VideoWinDriver();
 
-        events.add(new Event("进", 8, (m) -> {
+        events.add(new Event("进", 28, (m) -> {
             videoDriver.forward();
             m.resetEvents();
         }));
-        events.add(new Event("退", 8, (m) -> {
+        events.add(new Event("退", 28, (m) -> {
             videoDriver.backward();
             m.resetEvents();
         }));
-        events.add(new Event("赞", 8, (m) -> {
+        events.add(new Event("赞", 28, (m) -> {
             videoDriver.like();
         }));
     }

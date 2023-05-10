@@ -20,7 +20,7 @@ public class Event {
     }
 
     public void receive(String message, MessageEventManager manager) {
-        if (textPoint.equals("进") && current.incrementAndGet() >= triggerLevel) {
+        if (textPoint.equals(message) && current.incrementAndGet() >= triggerLevel) {
             executor.execute(manager);
             current = new AtomicInteger(0);
         }

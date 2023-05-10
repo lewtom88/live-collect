@@ -1,10 +1,13 @@
 package com.wy;
 
+import com.wy.event.MessageEventManager;
+import com.wy.event.video.VideoDriver;
 import com.wy.model.Result;
 import com.wy.service.LiveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -40,6 +43,14 @@ public class VideoGameController {
         Result<Boolean> r = new Result<>();
         r.setData(true);
 
+        return r;
+    }
+
+    @RequestMapping("/video_test")
+    public Result<Boolean> video_test(@RequestParam(name = "message") String message) {
+        Result<Boolean> r = new Result<>();
+        r.setData(true);
+        liveService.getEventManager().receive(message);
         return r;
     }
 }
